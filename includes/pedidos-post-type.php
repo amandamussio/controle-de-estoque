@@ -65,13 +65,6 @@
 
 	    wp_nonce_field( 'save_infos_pedido', 'pedidos_wpnonce' );
 
-    	echo '<div>';
-	    echo '<label for="produto_id">Produto:</label>';
-	    echo '</div>';
-	    echo '<div>';
-	    echo '<td><select name="produto_id" id="produto_id">';
-	    echo '</div>';
-
 	    $args = array(
 	    	'post_type' => 'produtos',
 		    'showposts' => '-1',
@@ -79,24 +72,30 @@
 
 		$the_query = new WP_Query( $args );
 
-		while ($the_query->have_posts()) {
-		    $the_query->the_post();
-		    $postId = get_the_ID();
-		    $postTitle = get_the_title();
-		    $selected = ($postId == $idProduto) ? ' selected="selected"' : '';
-		    echo '<option value="'.$postId.'"'.$selected.'>'.$postTitle.'</option>';
-		}
+	    if($the_query->have_posts()): 
 
-		wp_reset_query();
+			echo '<div>';
+			echo '<label for="produto_id">Produto:</label>';
+			echo '</div>';
+			echo '<div>';
+			echo '<td><select name="produto_id" id="produto_id">';
 
-	    echo '</select>';
-	    echo '</div>';
-    	echo '<div>';
-	    echo '<label for="cliente_id"> Cliente: </label>';
-	    echo '</div>';
-	    echo '<div>';
-	    echo '<select name="cliente_id" id="cliente_id">';
-	    echo '</div>';
+		   	while ($the_query->have_posts()) : $the_query->the_post(); 
+
+			$postId = get_the_ID();
+			$postTitle = get_the_title();
+			$selected = ($postId == $idProduto) ? ' selected="selected"' : '';
+			echo '<option value="'.$postId.'"'.$selected.'>'.$postTitle.'</option>';
+
+			endwhile; wp_reset_query();  
+			echo '</select>';
+			echo '</div>';
+	     
+	     else : 
+
+	    	echo '<div>Não há Produtos cadastrados</div>';
+
+		endif;
 
 		$args = array(
 	    	'post_type' => 'clientes',
@@ -105,18 +104,31 @@
 
 		$the_query = new WP_Query( $args );
 
-		while ($the_query->have_posts()) {
+		if($the_query->have_posts()):
+
+	    	echo '<div>';
+		    echo '<label for="cliente_id"> Cliente: </label>';
+		    echo '</div>';
+		    echo '<div>';
+		    echo '<select name="cliente_id" id="cliente_id">';
+
+		while ($the_query->have_posts()) : $the_query->the_post(); 
 		    $the_query->the_post();
 		    $postId = get_the_ID();
 		    $postTitle = get_the_title();
 		    $selected = ($postId == $idCliente) ? ' selected="selected"' : '';
 		    echo '<option value="'.$postId.'"'.$selected.'>'.$postTitle.'</option>';
-		}
-
-		wp_reset_query();
 
 	    echo '</select>';
-	    echo '</div>';	    
+	    echo '</div>';
+
+		endwhile;  
+		wp_reset_query();
+
+	    else :  
+	    	echo '<div>Não há Clientes Cadastrados</div>'; 
+
+	    endif; 
 	}
 	add_action('add_meta_boxes', 'add_meta_box_pedidos');
 
